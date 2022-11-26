@@ -1,0 +1,215 @@
+<!DOCTYPE html><html lang="en" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>Java中的线程与反射 | Have @ Nice day</title><meta name="author" content="小码龙"><meta name="copyright" content="小码龙"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="线程实现方式：    1.继承Theard类实现run方法    2.Runnable接口，作为Theard类的参数创建Theard对象   3.Callable接口，方法call()，   4.线程池操作，ThreadPoolExecutor，需要传入TheardFactory接口实现类的参数   反射主要类：    java.lang.Class	代表整个字节码。代表一个类型，代表整个类。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java中的线程与反射">
+<meta property="og:url" content="https://github.com/HenryBorder/HenryBorder.github.io/2022/06/13/Java/index.html">
+<meta property="og:site_name" content="Have @ Nice day">
+<meta property="og:description" content="线程实现方式：    1.继承Theard类实现run方法    2.Runnable接口，作为Theard类的参数创建Theard对象   3.Callable接口，方法call()，   4.线程池操作，ThreadPoolExecutor，需要传入TheardFactory接口实现类的参数   反射主要类：    java.lang.Class	代表整个字节码。代表一个类型，代表整个类。">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://github.com/HenryBorder/HenryBorder.github.io/img/background.jpeg">
+<meta property="article:published_time" content="2022-06-12T16:00:00.000Z">
+<meta property="article:modified_time" content="2022-11-26T04:39:29.460Z">
+<meta property="article:author" content="小码龙">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://github.com/HenryBorder/HenryBorder.github.io/img/background.jpeg"><link rel="shortcut icon" href="/HenryBorder/HenryBorder.github.io/img/favicon.png"><link rel="canonical" href="https://github.com/HenryBorder/HenryBorder.github.io/2022/06/13/Java/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/HenryBorder/HenryBorder.github.io/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/HenryBorder/HenryBorder.github.io/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: {"defaultEncoding":2,"translateDelay":0,"msgToTraditionalChinese":"繁","msgToSimplifiedChinese":"簡"},
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":false,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: 'Just',
+    min: 'minutes ago',
+    hour: 'hours ago',
+    day: 'days ago',
+    month: 'months ago'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Java中的线程与反射',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2022-11-26 12:39:29'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/HenryBorder/HenryBorder.github.io/img/headphoto.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/HenryBorder/HenryBorder.github.io/archives/"><div class="headline">Articles</div><div class="length-num">6</div></a><a href="/HenryBorder/HenryBorder.github.io/tags/"><div class="headline">Tags</div><div class="length-num">0</div></a><a href="/HenryBorder/HenryBorder.github.io/categories/"><div class="headline">Categories</div><div class="length-num">2</div></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/HenryBorder/HenryBorder.github.io/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> 快速检索</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/HenryBorder/HenryBorder.github.io/archives/"><i class="fa-fw fas fa-archive"></i><span> 档案馆</span></a></li><li><a class="site-page child" href="/HenryBorder/HenryBorder.github.io/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/HenryBorder/HenryBorder.github.io/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('/HenryBorder/HenryBorder.github.io/img/background.jpeg')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/HenryBorder/HenryBorder.github.io/">Have @ Nice day</a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/HenryBorder/HenryBorder.github.io/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> 快速检索</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/HenryBorder/HenryBorder.github.io/archives/"><i class="fa-fw fas fa-archive"></i><span> 档案馆</span></a></li><li><a class="site-page child" href="/HenryBorder/HenryBorder.github.io/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/HenryBorder/HenryBorder.github.io/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">Java中的线程与反射</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" datetime="2022-06-12T16:00:00.000Z" title="Created 2022-06-13 00:00:00">2022-06-13</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" datetime="2022-11-26T04:39:29.460Z" title="Updated 2022-11-26 12:39:29">2022-11-26</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/HenryBorder/HenryBorder.github.io/categories/JAVA/">JAVA</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="Java中的线程与反射"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">Post View:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="线程"><a href="#线程" class="headerlink" title="线程"></a>线程</h1><p>实现方式：</p>
+<table>
+<thead>
+<tr>
+<th>1.继承Theard类实现run方法</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>2.Runnable接口，作为Theard类的参数创建Theard对象</td>
+</tr>
+<tr>
+<td>3.Callable接口，方法call()，</td>
+</tr>
+<tr>
+<td>4.线程池操作，ThreadPoolExecutor，需要传入TheardFactory接口实现类的参数</td>
+</tr>
+</tbody></table>
+<h1 id="反射"><a href="#反射" class="headerlink" title="反射"></a>反射</h1><p>主要类：</p>
+<table>
+<thead>
+<tr>
+<th>java.lang.Class	代表整个字节码。代表一个类型，代表整个类。</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>java.lang.reflect.Method	代表字节码中的方法字节码。代表类中的方法。</td>
+</tr>
+<tr>
+<td>java.lang.reflect.Constructor	代表字节码中的构造方法字节码。代表类中的构造方法。</td>
+</tr>
+<tr>
+<td>java.lang.reflect.Field	代表字节码中的属性字节码。代表类中的成员变量（静态变量+实例变量）。</td>
+</tr>
+</tbody></table>
+<p>获取Class：</p>
+<table>
+<thead>
+<tr>
+<th>Class.forName(“完整类名带包名”)</th>
+<th>静态方法</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>对象.getClass()</td>
+<td></td>
+</tr>
+<tr>
+<td>任何类型.class</td>
+<td></td>
+</tr>
+</tbody></table>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">ReflectTest02</span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> ClassNotFoundException, InstantiationException, IllegalAccessException &#123;</span><br><span class="line">        <span class="comment">// 下面这段代码是以反射机制的方式创建对象。    </span></span><br><span class="line"><span class="comment">// 通过反射机制，获取Class，通过Class来实例化对象</span></span><br><span class="line">    <span class="type">Class</span> <span class="variable">c</span> <span class="operator">=</span> Class.forName(<span class="string">&quot;javase.reflectBean.User&quot;</span>);</span><br><span class="line">    <span class="comment">// newInstance() 这个方法会调用User这个类的无参数构造方法，完成对象的创建。</span></span><br><span class="line">    <span class="comment">// 重点是：newInstance()调用的是无参构造，必须保证无参构造是存在的！</span></span><br><span class="line">    <span class="type">Object</span> <span class="variable">obj</span> <span class="operator">=</span> c.newInstance();</span><br><span class="line">    System.out.println(obj);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">必须掌握：</span></span><br><span class="line"><span class="comment">    怎么通过反射机制访问一个java对象的属性？</span></span><br><span class="line"><span class="comment">        给属性赋值set</span></span><br><span class="line"><span class="comment">        获取属性的值get</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">ReflectTest07</span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> ClassNotFoundException, InstantiationException, IllegalAccessException, NoSuchFieldException &#123;</span><br><span class="line">        <span class="comment">//不使用反射机制给属性赋值</span></span><br><span class="line">        <span class="type">Student</span> <span class="variable">student</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Student</span>();</span><br><span class="line">        <span class="comment">/**给属性赋值三要素：给s对象的no属性赋值1111</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">   * 要素1：对象s</span></span><br><span class="line"><span class="comment">     ：no属性</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">        * 要素3：1111</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">          ​        student.no = 1111;</span></span><br><span class="line"><span class="comment">          ​        /**读属性值两个要素：获取s对象的no属性的值。</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">             * 要素1：对象s</span></span><br><span class="line"><span class="comment">               ：no属性</span></span><br><span class="line"><span class="comment">                        */</span></span><br><span class="line">                       System.out.println(student.no);   </span><br><span class="line"><span class="comment">//使用反射机制给属性赋值</span></span><br><span class="line">    <span class="type">Class</span> <span class="variable">studentClass</span> <span class="operator">=</span> Class.forName(<span class="string">&quot;javase.reflectBean.Student&quot;</span>);</span><br><span class="line">    <span class="type">Object</span> <span class="variable">obj</span> <span class="operator">=</span> studentClass.newInstance();<span class="comment">// obj就是Student对象。（底层调用无参数构造方法）</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 获取no属性（根据属性的名称来获取Field）</span></span><br><span class="line">    <span class="type">Field</span> <span class="variable">noField</span> <span class="operator">=</span> studentClass.getDeclaredField(<span class="string">&quot;no&quot;</span>);</span><br><span class="line">    <span class="comment">// 给obj对象(Student对象)的no属性赋值</span></span><br><span class="line">    <span class="comment">/*</span></span><br><span class="line"><span class="comment">        虽然使用了反射机制，但是三要素还是缺一不可：</span></span><br><span class="line"><span class="comment">            要素1：obj对象</span></span><br><span class="line"><span class="comment">            要素2：no属性</span></span><br><span class="line"><span class="comment">            要素3：22222值</span></span><br><span class="line"><span class="comment">        注意：反射机制让代码复杂了，但是为了一个“灵活”，这也是值得的。</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    noField.set(obj, <span class="number">22222</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 读取属性的值</span></span><br><span class="line">    <span class="comment">// 两个要素：获取obj对象的no属性的值。</span></span><br><span class="line">    System.out.println(noField.get(obj));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>私有属性：</p>
+<table>
+<thead>
+<tr>
+<th>public void <strong>setAccessible</strong>(boolean flag)</th>
+<th>默认false，设置为true为打破封装</th>
+</tr>
+</thead>
+<tbody><tr>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">Author: </span><span class="post-copyright-info"><a href="https://github.com/HenryBorder/HenryBorder.github.io">Henry</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">Link: </span><span class="post-copyright-info"><a href="https://github.com/HenryBorder/HenryBorder.github.io/2022/06/13/Java/">https://github.com/HenryBorder/HenryBorder.github.io/2022/06/13/Java/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">Copyright Notice: </span><span class="post-copyright-info">All articles in this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="tag_share"><div class="post-meta__tag-list"></div><div class="post_share"><div class="social-share" data-image="/HenryBorder/HenryBorder.github.io/img/background.jpeg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-full"><a href="/HenryBorder/HenryBorder.github.io/2022/06/19/Spring-boot/"><img class="prev-cover" src="/HenryBorder/HenryBorder.github.io/img/background.jpeg" onerror="onerror=null;src='/HenryBorder/HenryBorder.github.io/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">Previous Post</div><div class="prev_info">Spring-Boot 某些配置</div></div></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/HenryBorder/HenryBorder.github.io/img/headphoto.png" onerror="this.onerror=null;this.src='/HenryBorder/HenryBorder.github.io/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">小码龙</div><div class="author-info__description"></div></div><div class="card-info-data site-data is-center"><a href="/HenryBorder/HenryBorder.github.io/archives/"><div class="headline">Articles</div><div class="length-num">6</div></a><a href="/HenryBorder/HenryBorder.github.io/tags/"><div class="headline">Tags</div><div class="length-num">0</div></a><a href="/HenryBorder/HenryBorder.github.io/categories/"><div class="headline">Categories</div><div class="length-num">2</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://gitee.com/henrystore"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>Announcement</span></div><div class="announcement_content">站点持续更新中!!</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>Catalog</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%BA%BF%E7%A8%8B"><span class="toc-number">1.</span> <span class="toc-text">线程</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%8F%8D%E5%B0%84"><span class="toc-number">2.</span> <span class="toc-text">反射</span></a></li></ol></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2022 By 小码龙</div><div class="framework-info"><span>Framework </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>Theme </span><a href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="Read Mode"><i class="fas fa-book-open"></i></button><button id="translateLink" type="button" title="Switch Between Traditional Chinese And Simplified Chinese">繁</button><button id="darkmode" type="button" title="Switch Between Light And Dark Mode"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="Toggle between single-column and double-column"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="Setting"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="Table Of Contents"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="Back To Top"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/HenryBorder/HenryBorder.github.io/js/utils.js"></script><script src="/HenryBorder/HenryBorder.github.io/js/main.js"></script><script src="/HenryBorder/HenryBorder.github.io/js/tw_cn.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.min.js"></script><div class="js-pjax"></div><script defer="defer" id="ribbon" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-ribbon.min.js" size="150" alpha="0.6" zIndex="-1" mobile="false" data-click="false"></script><script id="click-heart" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/click-heart.min.js" async="async" mobile="false"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
